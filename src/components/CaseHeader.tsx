@@ -1,8 +1,14 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, Plus } from "lucide-react";
+import { ChevronLeft, Plus, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CaseHeaderProps {
   title: string;
@@ -37,14 +43,28 @@ const CaseHeader = ({ title }: CaseHeaderProps) => {
         </motion.h1>
       </div>
       
-      <Button 
-        variant="default" 
-        size="sm"
-        className="gap-1.5 shadow-sm hover:shadow transition-all duration-150"
-      >
-        <Plus className="h-4 w-4" />
-        New document
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="default" 
+            size="sm"
+            className="gap-1.5 shadow-sm hover:shadow transition-all duration-150"
+          >
+            <Plus className="h-4 w-4" />
+            New
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-[180px]">
+          <DropdownMenuItem className="cursor-pointer">
+            <FileText className="h-4 w-4 mr-2" />
+            New Document
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            <FileText className="h-4 w-4 mr-2" />
+            New Invoice
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </motion.header>
   );
 };
