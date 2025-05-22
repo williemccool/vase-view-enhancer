@@ -1,4 +1,3 @@
-
 import PDFDocument from 'pdfkit';
 import { Buffer } from 'buffer';
 
@@ -50,6 +49,7 @@ export class InvoiceGenerator {
   ): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       try {
+        // @ts-ignore - PDFDocument may have some type issues
         const doc = new PDFDocument({
           margin: 50,
           size: 'A4',
@@ -60,7 +60,7 @@ export class InvoiceGenerator {
         });
 
         const buffers: Buffer[] = [];
-        doc.on('data', (chunk) => buffers.push(Buffer.from(chunk)));
+        doc.on('data', (chunk: any) => buffers.push(Buffer.from(chunk)));
         doc.on('end', () => {
           const pdfData = Buffer.concat(buffers);
           resolve(pdfData);
@@ -80,9 +80,6 @@ export class InvoiceGenerator {
             return 'Invalid Date';
           }
         };
-
-        // Add logo or branding (placeholder)
-        // doc.image('logo.png', 50, 45, { width: 100 });
 
         // Document styling
         const primaryColor = '#4f46e5'; // Indigo color
