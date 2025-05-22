@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,5 +98,27 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .tab-button {
+    @apply px-4 py-2 rounded-none border-b-2 border-transparent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .tab-button.active {
+    @apply border-primary text-primary font-medium;
+  }
+
+  .tab-button:not(.active) {
+    @apply hover:bg-muted/50 text-muted-foreground;
+  }
+
+  .case-table th {
+    @apply text-left py-3 px-4 bg-muted/50 text-muted-foreground font-medium text-sm;
+  }
+
+  .case-table td {
+    @apply py-3 px-4 border-b;
   }
 }
