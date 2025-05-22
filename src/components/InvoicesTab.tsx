@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,6 +79,12 @@ const InvoicesTab = () => {
 
   const generateInvoicePDF = async (invoiceId: string) => {
     try {
+      toast({
+        title: "Generating Invoice",
+        description: "Please wait while we generate your invoice...",
+        duration: 3000,
+      });
+      
       // Mock data for demonstration
       const invoice = {
         invoice_number: invoiceId,
@@ -142,6 +147,10 @@ const InvoicesTab = () => {
         clientDetails,
         caseDetails
       );
+      
+      if (pdfBuffer.length === 0) {
+        throw new Error("Failed to generate PDF");
+      }
       
       // Create a blob URL for the PDF
       const pdfUrl = bufferToUrl(pdfBuffer);
