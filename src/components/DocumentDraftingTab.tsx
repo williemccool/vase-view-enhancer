@@ -1,22 +1,17 @@
 
 import { useState } from "react";
-import { FileText, Upload, Eye, Download, Trash2 } from "lucide-react";
+import { FileText, Eye, Download, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-
-interface SampleDocument {
-  id: string;
-  name: string;
-  type: string;
-  content: string;
-  uploadDate: string;
-}
+import EnhancedUploadDialog from "./EnhancedUploadDialog";
+import { EnhancedSampleDocument } from "@/types/documentTypes";
+import { mockCases, mockClients } from "@/data/mockData";
 
 interface GeneratedDocument {
   id: string;
@@ -39,49 +34,45 @@ const documentTypes = [
 const DocumentDraftingTab = () => {
   const [selectedDocumentType, setSelectedDocumentType] = useState<string>("");
   const [specificRequirements, setSpecificRequirements] = useState<string>("");
-  const [sampleDocuments, setSampleDocuments] = useState<SampleDocument[]>([
+  const [sampleDocuments, setSampleDocuments] = useState<EnhancedSampleDocument[]>([
     {
       id: "1",
       name: "Sample Legal Notice Template",
+      originalFileName: "legal_notice_template.txt",
       type: "Legal Notice for Recovery of Money",
       content: "LEGAL NOTICE\n\nTo,\n[Debtor Name]\n[Debtor Address]\n\nDear Sir/Madam,\n\nMy client [Client Name] has instructed me to serve upon you this Legal Notice for the recovery of money...",
-      uploadDate: "2025-01-15"
+      uploadDate: "2025-01-15",
+      caseId: "case-1",
+      clientId: "client-1",
+      caseName: "Property Dispute - ABC vs XYZ",
+      clientName: "ABC Corporation"
     },
     {
       id: "2",
       name: "Employment Contract Template",
+      originalFileName: "employment_contract.doc",
       type: "Employment Contract",
       content: "EMPLOYMENT AGREEMENT\n\nThis Employment Agreement is entered into between [Company Name] and [Employee Name]...",
-      uploadDate: "2025-01-10"
+      uploadDate: "2025-01-10",
+      caseId: "case-2",
+      clientId: "client-2",
+      caseName: "Employment Contract Review",
+      clientName: "John Smith"
     }
   ]);
+  
   const [generatedDocument, setGeneratedDocument] = useState<GeneratedDocument | null>(null);
-  const [selectedSampleDoc, setSelectedSampleDoc] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [previewDocument, setPreviewDocument] = useState<SampleDocument | null>(null);
+  const [previewDocument, setPreviewDocument] = useState<EnhancedSampleDocument | null>(null);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        const newDocument: SampleDocument = {
-          id: Date.now().toString(),
-          name: file.name,
-          type: selectedDocumentType || "Unknown",
-          content: content,
-          uploadDate: new Date().toISOString().split('T')[0]
-        };
-        setSampleDocuments(prev => [...prev, newDocument]);
-        toast({
-          title: "Document uploaded successfully",
-          description: `${file.name} has been added to your sample documents.`
-        });
-      };
-      reader.readAsText(file);
-    }
+  const handleEnhancedUpload = (document: EnhancedSampleDocument) => {
+    setSampleDocuments(prev => [...prev, document]);
+    toast({
+      title: "Document uploaded successfully",
+      description: `${document.name} has been added to your sample documents.`
+    });
   };
 
   const handleGenerateDocument = async () => {
@@ -166,37 +157,47 @@ const DocumentDraftingTab = () => {
 
             {selectedDocumentType && (
               <div className="space-y-3">
-                <Label>Upload Sample Document (Optional)</Label>
-                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Upload a sample document for better results
-                  </p>
-                  <input
-                    type="file"
-                    accept=".txt,.doc,.docx"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <Button asChild variant="outline" size="sm">
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      Choose File
-                    </label>
+                <div className="flex items-center justify-between">
+                  <Label>Sample Documents</Label>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsUploadDialogOpen(true)}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload New
                   </Button>
                 </div>
 
-                {filteredSampleDocs.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>Previously Uploaded Samples</Label>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {filteredSampleDocs.map((doc) => (
-                        <div key={doc.id} className="flex items-center justify-between p-2 border rounded">
-                          <div className="flex items-center gap-2 flex-1">
-                            <FileText className="h-4 w-4 text-blue-500" />
-                            <span className="text-sm truncate">{doc.name}</span>
+                {filteredSampleDocs.length > 0 ? (
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {filteredSampleDocs.map((doc) => (
+                      <div key={doc.id} className="border rounded p-3 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                              <span className="font-medium text-sm truncate">{doc.name}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Original: {doc.originalFileName}
+                            </p>
+                            {(doc.clientName || doc.caseName) && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {doc.clientName && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    Client: {doc.clientName}
+                                  </Badge>
+                                )}
+                                {doc.caseName && (
+                                  <Badge variant="outline" className="text-xs">
+                                    Case: {doc.caseName}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 ml-2">
                             <Sheet>
                               <SheetTrigger asChild>
                                 <Button
@@ -215,8 +216,15 @@ const DocumentDraftingTab = () => {
                                 <div className="mt-4 space-y-4">
                                   <div>
                                     <p className="font-medium">{doc.name}</p>
+                                    <p className="text-sm text-muted-foreground">Original: {doc.originalFileName}</p>
                                     <p className="text-sm text-muted-foreground">Type: {doc.type}</p>
                                     <p className="text-sm text-muted-foreground">Uploaded: {doc.uploadDate}</p>
+                                    {doc.clientName && (
+                                      <p className="text-sm text-muted-foreground">Client: {doc.clientName}</p>
+                                    )}
+                                    {doc.caseName && (
+                                      <p className="text-sm text-muted-foreground">Case: {doc.caseName}</p>
+                                    )}
                                   </div>
                                   <div className="border rounded p-4 max-h-96 overflow-y-auto">
                                     <pre className="text-sm whitespace-pre-wrap">{doc.content}</pre>
@@ -234,8 +242,23 @@ const DocumentDraftingTab = () => {
                             </Button>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                    <FileText className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground mb-2">
+                      No sample documents for this type
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setIsUploadDialogOpen(true)}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload First Document
+                    </Button>
                   </div>
                 )}
               </div>
@@ -307,6 +330,15 @@ const DocumentDraftingTab = () => {
           </CardContent>
         </Card>
       </div>
+
+      <EnhancedUploadDialog
+        isOpen={isUploadDialogOpen}
+        onClose={() => setIsUploadDialogOpen(false)}
+        onUpload={handleEnhancedUpload}
+        documentType={selectedDocumentType}
+        cases={mockCases}
+        clients={mockClients}
+      />
     </div>
   );
 };
