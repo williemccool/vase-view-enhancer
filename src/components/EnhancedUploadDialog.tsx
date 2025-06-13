@@ -28,8 +28,8 @@ const EnhancedUploadDialog = ({
 }: EnhancedUploadDialogProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [customName, setCustomName] = useState("");
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("");
-  const [selectedClientId, setSelectedClientId] = useState<string>("");
+  const [selectedCaseId, setSelectedCaseId] = useState<string>("none");
+  const [selectedClientId, setSelectedClientId] = useState<string>("none");
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,8 +57,8 @@ const EnhancedUploadDialog = ({
         type: documentType,
         content: content,
         uploadDate: new Date().toISOString().split('T')[0],
-        caseId: selectedCaseId || undefined,
-        clientId: selectedClientId || undefined,
+        caseId: selectedCaseId !== "none" ? selectedCaseId : undefined,
+        clientId: selectedClientId !== "none" ? selectedClientId : undefined,
         caseName: selectedCase?.name,
         clientName: selectedClient?.name
       };
@@ -72,12 +72,12 @@ const EnhancedUploadDialog = ({
   const handleClose = () => {
     setSelectedFile(null);
     setCustomName("");
-    setSelectedCaseId("");
-    setSelectedClientId("");
+    setSelectedCaseId("none");
+    setSelectedClientId("none");
     onClose();
   };
 
-  const filteredCases = selectedClientId 
+  const filteredCases = selectedClientId !== "none"
     ? cases.filter(case_ => case_.clientName === clients.find(c => c.id === selectedClientId)?.name)
     : cases;
 
@@ -153,7 +153,7 @@ const EnhancedUploadDialog = ({
                     <SelectValue placeholder="Select a client" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No client</SelectItem>
+                    <SelectItem value="none">No client</SelectItem>
                     {clients.map((client) => (
                       <SelectItem key={client.id} value={client.id}>
                         {client.name}
@@ -168,13 +168,13 @@ const EnhancedUploadDialog = ({
                 <Select 
                   value={selectedCaseId} 
                   onValueChange={setSelectedCaseId}
-                  disabled={!selectedClientId}
+                  disabled={selectedClientId === "none"}
                 >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder={selectedClientId ? "Select a case" : "Select a client first"} />
+                    <SelectValue placeholder={selectedClientId !== "none" ? "Select a case" : "Select a client first"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No case</SelectItem>
+                    <SelectItem value="none">No case</SelectItem>
                     {filteredCases.map((case_) => (
                       <SelectItem key={case_.id} value={case_.id}>
                         <div className="flex flex-col">
