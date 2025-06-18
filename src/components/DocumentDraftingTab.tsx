@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { FileText, Eye, Download, Trash2, Upload, Sparkles, Clock, Tag, Settings, Check } from "lucide-react";
+import { FileText, Eye, Download, Trash2, Upload, Sparkles, Clock, Tag, Settings, Check, MapPin, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,9 +32,59 @@ const documentTypes = [
   "Rental Agreement"
 ];
 
+const jurisdictions = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh", 
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Puducherry",
+  "Chandigarh",
+  "Andaman and Nicobar Islands",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Lakshadweep"
+];
+
+const formattingProfiles = [
+  "Standard Legal Format",
+  "High Court Format",
+  "Supreme Court Format",
+  "Corporate Legal Format",
+  "Minimalist Format",
+  "Traditional Format"
+];
+
 const DocumentDraftingTab = () => {
   const navigate = useNavigate();
   const [selectedDocumentType, setSelectedDocumentType] = useState<string>("");
+  const [selectedJurisdiction, setSelectedJurisdiction] = useState<string>("");
+  const [selectedFormattingProfile, setSelectedFormattingProfile] = useState<string>("");
   const [specificRequirements, setSpecificRequirements] = useState<string>("");
   const [selectedReferenceDocuments, setSelectedReferenceDocuments] = useState<string[]>([]);
   const [sampleDocuments, setSampleDocuments] = useState<EnhancedSampleDocument[]>([
@@ -104,10 +154,18 @@ const DocumentDraftingTab = () => {
         ? `\n\nUsing ${selectedReferenceDocuments.length} reference document(s) for improved accuracy.`
         : '';
       
+      const jurisdictionText = selectedJurisdiction 
+        ? `\n\nJurisdiction: ${selectedJurisdiction}`
+        : '';
+        
+      const formattingText = selectedFormattingProfile 
+        ? `\n\nFormatting: ${selectedFormattingProfile}`
+        : '';
+      
       const generated: GeneratedDocument = {
         id: Date.now().toString(),
         type: selectedDocumentType,
-        content: `GENERATED ${selectedDocumentType.toUpperCase()}\n\nBased on your requirements: ${specificRequirements}${selectedDocsText}\n\nThis is a generated document that would contain the specific legal content based on your requirements. The AI would analyze your requirements and generate appropriate legal language, clauses, and structure for the selected document type.\n\n[Document content would be generated here based on the specific requirements and selected sample documents...]`,
+        content: `GENERATED ${selectedDocumentType.toUpperCase()}\n\nBased on your requirements: ${specificRequirements}${selectedDocsText}${jurisdictionText}${formattingText}\n\nThis is a generated document that would contain the specific legal content based on your requirements. The AI would analyze your requirements and generate appropriate legal language, clauses, and structure for the selected document type.\n\n[Document content would be generated here based on the specific requirements, selected sample documents, jurisdiction, and formatting preferences...]`,
         generatedDate: new Date().toISOString().split('T')[0]
       };
       setGeneratedDocument(generated);
@@ -189,6 +247,54 @@ const DocumentDraftingTab = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Optional Fields Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Jurisdiction Selection */}
+                  <div className="space-y-3">
+                    <Label className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-600" />
+                      State/Jurisdiction
+                      <Badge variant="outline" className="text-xs text-gray-500">Optional</Badge>
+                    </Label>
+                    <Select value={selectedJurisdiction} onValueChange={setSelectedJurisdiction}>
+                      <SelectTrigger className="h-12 text-base border-2 border-gray-200 hover:border-blue-300 transition-colors">
+                        <SelectValue placeholder="Select state or jurisdiction" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-80">
+                        {jurisdictions.map((jurisdiction) => (
+                          <SelectItem key={jurisdiction} value={jurisdiction} className="py-2">
+                            {jurisdiction}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Formatting Profile Selection */}
+                  <div className="space-y-3">
+                    <Label className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Palette className="h-4 w-4 text-gray-600" />
+                      Formatting Profile
+                      <Badge variant="outline" className="text-xs text-gray-500">Optional</Badge>
+                    </Label>
+                    <Select value={selectedFormattingProfile} onValueChange={setSelectedFormattingProfile}>
+                      <SelectTrigger className="h-12 text-base border-2 border-gray-200 hover:border-blue-300 transition-colors">
+                        <SelectValue placeholder="Choose formatting style" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-80">
+                        {formattingProfiles.map((profile) => (
+                          <SelectItem key={profile} value={profile} className="py-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                              {profile}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Requirements Input */}
