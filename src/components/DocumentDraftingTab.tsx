@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { FileText, Eye, Download, Trash2, Upload, Sparkles, Clock, Tag } from "lucide-react";
+import { FileText, Eye, Download, Trash2, Upload, Sparkles, Clock, Tag, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import EnhancedUploadDialog from "./EnhancedUploadDialog";
 import { EnhancedSampleDocument } from "@/types/documentTypes";
 import { mockCases, mockClients } from "@/data/mockData";
@@ -32,6 +32,7 @@ const documentTypes = [
 ];
 
 const DocumentDraftingTab = () => {
+  const navigate = useNavigate();
   const [selectedDocumentType, setSelectedDocumentType] = useState<string>("");
   const [specificRequirements, setSpecificRequirements] = useState<string>("");
   const [sampleDocuments, setSampleDocuments] = useState<EnhancedSampleDocument[]>([
@@ -118,28 +119,30 @@ const DocumentDraftingTab = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-white border-b border-gray-100">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5" />
-        <div className="relative px-6 py-12 mx-auto max-w-7xl">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-blue-700 bg-blue-50 rounded-full">
-              <Sparkles className="w-4 h-4" />
-              AI-Powered Document Generation
+      {/* Compact Hero Section */}
+      <div className="bg-white border-b border-gray-100 py-6">
+        <div className="px-6 mx-auto max-w-7xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold text-gray-900">AI Drafting</h1>
+              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200">
+                Powered by Lawberry AI
+              </Badge>
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl mb-4">
-              Create Legal Documents
-              <span className="text-blue-600"> Instantly</span>
-            </h1>
-            <p className="max-w-2xl mx-auto text-xl text-gray-600">
-              Upload sample documents, specify your requirements, and let AI generate professional legal documents tailored to your needs.
-            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/formatting')}
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Add Formatting Configuration
+            </Button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="px-6 py-12 mx-auto max-w-7xl">
+      <div className="px-6 py-8 mx-auto max-w-7xl">
         <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
           {/* Document Creation Section */}
           <div className="xl:col-span-3 space-y-8">
