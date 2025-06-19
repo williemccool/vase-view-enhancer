@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   FileText,
@@ -6,8 +7,8 @@ import {
   Clock,
   Tag,
   Check,
-  MapPin,
-  Palette,
+  Eye,
+  Trash2,
   Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -28,6 +29,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import EnhancedUploadDialog from "../EnhancedUploadDialog";
+import { EnhancedSampleDocument } from "@/types/documentTypes";
+import { mockCases, mockClients } from "@/data/mockData";
 
 interface DocumentType {
   value: string;
@@ -45,56 +49,6 @@ interface DraftingPanelProps {
   onSubmit: () => void;
 }
 
-// Indian States and Jurisdictions
-const jurisdictions = [
-  { value: "andhra-pradesh", label: "Andhra Pradesh" },
-  { value: "arunachal-pradesh", label: "Arunachal Pradesh" },
-  { value: "assam", label: "Assam" },
-  { value: "bihar", label: "Bihar" },
-  { value: "chhattisgarh", label: "Chhattisgarh" },
-  { value: "goa", label: "Goa" },
-  { value: "gujarat", label: "Gujarat" },
-  { value: "haryana", label: "Haryana" },
-  { value: "himachal-pradesh", label: "Himachal Pradesh" },
-  { value: "jharkhand", label: "Jharkhand" },
-  { value: "karnataka", label: "Karnataka" },
-  { value: "kerala", label: "Kerala" },
-  { value: "madhya-pradesh", label: "Madhya Pradesh" },
-  { value: "maharashtra", label: "Maharashtra" },
-  { value: "manipur", label: "Manipur" },
-  { value: "meghalaya", label: "Meghalaya" },
-  { value: "mizoram", label: "Mizoram" },
-  { value: "nagaland", label: "Nagaland" },
-  { value: "odisha", label: "Odisha" },
-  { value: "punjab", label: "Punjab" },
-  { value: "rajasthan", label: "Rajasthan" },
-  { value: "sikkim", label: "Sikkim" },
-  { value: "tamil-nadu", label: "Tamil Nadu" },
-  { value: "telangana", label: "Telangana" },
-  { value: "tripura", label: "Tripura" },
-  { value: "uttar-pradesh", label: "Uttar Pradesh" },
-  { value: "uttarakhand", label: "Uttarakhand" },
-  { value: "west-bengal", label: "West Bengal" },
-  { value: "delhi", label: "Delhi" },
-  { value: "jammu-kashmir", label: "Jammu and Kashmir" },
-  { value: "ladakh", label: "Ladakh" },
-  { value: "puducherry", label: "Puducherry" },
-  { value: "chandigarh", label: "Chandigarh" },
-  { value: "andaman-nicobar", label: "Andaman and Nicobar Islands" },
-  { value: "dadra-nagar-haveli", label: "Dadra and Nagar Haveli and Daman and Diu" },
-  { value: "lakshadweep", label: "Lakshadweep" },
-];
-
-// Formatting profiles
-const formattingProfiles = [
-  { value: "standard", label: "Standard Legal Format" },
-  { value: "high-court", label: "High Court Format" },
-  { value: "supreme-court", label: "Supreme Court Format" },
-  { value: "corporate", label: "Corporate Legal Format" },
-  { value: "minimalist", label: "Minimalist Format" },
-  { value: "traditional", label: "Traditional Format" },
-];
-
 const DraftingPanel: React.FC<DraftingPanelProps> = ({
   documentTypes,
   documentType,
@@ -105,13 +59,9 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
   setRequirements,
   onSubmit,
 }) => {
-  const [selectedJurisdiction, setSelectedJurisdiction] = React.useState("");
-  const [selectedFormattingProfile, setSelectedFormattingProfile] =
-    React.useState("standard");
-  const [referenceFiles, setReferenceFiles] = React.useState<File[]>([]);
   const [selectedReferenceDocuments, setSelectedReferenceDocuments] =
     React.useState<string[]>([]);
-  const [sampleDocuments, setSampleDocuments] = React.useState([
+  const [sampleDocuments, setSampleDocuments] = React.useState<EnhancedSampleDocument[]>([
     {
       id: "1",
       name: "Sample Legal Notice Template",
@@ -120,6 +70,9 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
       content:
         "LEGAL NOTICE\n\nTo,\n[Debtor Name]\n[Debtor Address]\n\nDear Sir/Madam,\n\nMy client [Client Name] has instructed me to serve upon you this Legal Notice for the recovery of money...",
       uploadDate: "2025-01-15",
+      caseId: "case-1",
+      clientId: "client-1",
+      caseName: "Property Dispute - ABC vs XYZ",
       clientName: "ABC Corporation",
     },
     {
@@ -130,18 +83,17 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
       content:
         "EMPLOYMENT AGREEMENT\n\nThis Employment Agreement is entered into between [Company Name] and [Employee Name]...",
       uploadDate: "2025-01-10",
+      caseId: "case-2",
+      clientId: "client-2",
+      caseName: "Employment Contract Review",
       clientName: "John Smith",
     },
   ]);
-  const [previewDocument, setPreviewDocument] = React.useState<any>(null);
+  const [previewDocument, setPreviewDocument] = React.useState<EnhancedSampleDocument | null>(null);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = React.useState(false);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    setReferenceFiles((prev) => [...prev, ...files]);
-  };
-
-  const removeFile = (index: number) => {
-    setReferenceFiles((prev) => prev.filter((_, i) => i !== index));
+  const handleEnhancedUpload = (document: EnhancedSampleDocument) => {
+    setSampleDocuments(prev => [...prev, document]);
   };
 
   const handleSelectReferenceDoc = (docId: string) => {
@@ -202,74 +154,6 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
           </Select>
         </div>
 
-        {/* Optional Fields Grid */}
-        <div className="space-y-5">
-          {/* Jurisdiction Selection */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-900 dark:text-slate-300 flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gray-600" />
-              State/Jurisdiction
-              <Badge variant="outline" className="text-xs text-gray-500">
-                Optional
-              </Badge>
-            </label>
-            <Select
-              value={selectedJurisdiction}
-              onValueChange={setSelectedJurisdiction}
-              disabled={isProcessing}
-            >
-              <SelectTrigger className="">
-                <SelectValue placeholder="Select state or jurisdiction" />
-              </SelectTrigger>
-              <SelectContent className="max-h-80">
-                {jurisdictions.map((jurisdiction) => (
-                  <SelectItem
-                    key={jurisdiction.value}
-                    value={jurisdiction.value}
-                    className="py-2"
-                  >
-                    {jurisdiction.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Formatting Profile Selection */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-900 dark:text-slate-300 flex items-center gap-2">
-              <Palette className="h-4 w-4 text-gray-600" />
-              Formatting Profile
-              <Badge variant="outline" className="text-xs text-gray-500">
-                Optional
-              </Badge>
-            </label>
-            <Select
-              value={selectedFormattingProfile}
-              onValueChange={setSelectedFormattingProfile}
-              disabled={isProcessing}
-            >
-              <SelectTrigger className="">
-                <SelectValue placeholder="Choose formatting style" />
-              </SelectTrigger>
-              <SelectContent className="max-h-80">
-                {formattingProfiles.map((profile) => (
-                  <SelectItem
-                    key={profile.value}
-                    value={profile.value}
-                    className="py-2"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                      {profile.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
         {/* Requirements Input */}
         <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-900 dark:text-slate-300">
@@ -288,153 +172,101 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
           </p>
         </div>
 
-        {/* Reference Documents Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900">Add Reference Documents</h3>
-              <p className="text-xs text-gray-600 mt-1">
-                Upload or select existing documents to guide the AI in understanding your style preferences
-              </p>
-            </div>
-          </div>
-
-          {/* Upload Area */}
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
-            <input
-              type="file"
-              multiple
-              accept=".pdf,.doc,.docx,.txt"
-              onChange={handleFileUpload}
-              className="hidden"
-              id="file-upload"
-              disabled={isProcessing}
-            />
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer"
-            >
-              <div className="flex flex-col items-center">
-                <div className="p-3 bg-blue-50 rounded-full mb-3">
-                  <Upload className="h-6 w-6 text-blue-600" />
-                </div>
-                <p className="text-sm font-medium text-gray-900 mb-1">
-                  Click to upload reference documents
-                </p>
-                <p className="text-xs text-gray-500">
-                  PDF, DOC, DOCX, TXT files up to 10MB
+        {/* Sample Documents Section */}
+        {documentType && (
+          <div className="space-y-4 p-6 bg-gray-50 rounded-2xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Reference Documents</h3>
+                <p className="text-sm text-gray-600">
+                  Click to select documents that will help AI understand your preferred style
+                  {selectedReferenceDocuments.length > 0 && (
+                    <span className="ml-2 text-blue-600 font-medium">
+                      ({selectedReferenceDocuments.length} selected)
+                    </span>
+                  )}
                 </p>
               </div>
-            </label>
-          </div>
-
-          {/* Uploaded Files */}
-          {referenceFiles.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-sm font-medium text-gray-900">Uploaded Files</h4>
-              {referenceFiles.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-1.5 bg-blue-100 rounded">
-                      <FileText className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 truncate max-w-xs">
-                        {file.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {(file.size / 1024 / 1024).toFixed(1)} MB
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeFile(index)}
-                    disabled={isProcessing}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+              <Button 
+                type="button"
+                variant="outline" 
+                onClick={() => setIsUploadDialogOpen(true)}
+                className="border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 transition-all"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Add Reference
+              </Button>
             </div>
-          )}
 
-          {/* Existing Documents */}
-          {filteredSampleDocs.length > 0 && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-medium text-gray-900">
-                  Available Reference Documents
-                </h4>
-                {selectedReferenceDocuments.length > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    {selectedReferenceDocuments.length} selected
-                  </Badge>
-                )}
-              </div>
-              <div className="grid gap-3">
+            {filteredSampleDocs.length > 0 ? (
+              <div className="grid gap-4">
                 {filteredSampleDocs.map((doc) => {
                   const isSelected = selectedReferenceDocuments.includes(doc.id);
                   return (
-                    <div
-                      key={doc.id}
-                      className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-sm ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300"
+                    <div 
+                      key={doc.id} 
+                      className={`bg-white rounded-xl p-4 border-2 cursor-pointer transition-all group ${
+                        isSelected 
+                          ? 'border-blue-500 bg-blue-50 shadow-md' 
+                          : 'border-gray-200 hover:border-blue-300 hover:shadow-md'
                       }`}
                       onClick={() => handleSelectReferenceDoc(doc.id)}
                     >
                       <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3 flex-1">
-                          <div className={`p-2 rounded-lg ${isSelected ? "bg-blue-200" : "bg-gray-100"}`}>
-                            <FileText className={`h-4 w-4 ${isSelected ? "text-blue-700" : "text-gray-600"}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h5 className={`text-sm font-medium truncate ${
-                                isSelected ? "text-blue-900" : "text-gray-900"
-                              }`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-blue-200' : 'bg-blue-100'}`}>
+                              <FileText className={`h-4 w-4 ${isSelected ? 'text-blue-700' : 'text-blue-600'}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className={`font-medium truncate ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
                                 {doc.name}
-                              </h5>
-                              {isSelected && (
-                                <Check className="h-4 w-4 text-blue-600 flex-shrink-0" />
-                              )}
+                              </h4>
+                              <p className="text-xs text-gray-500">{doc.originalFileName}</p>
                             </div>
-                            <p className="text-xs text-gray-500 mb-2">{doc.originalFileName}</p>
-                            <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {doc.uploadDate}
-                              </span>
+                            {isSelected && (
+                              <div className="p-1 bg-blue-500 rounded-full">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          
+                          {(doc.clientName || doc.caseName) && (
+                            <div className="flex flex-wrap gap-2 mb-2">
                               {doc.clientName && (
-                                <span className="flex items-center gap-1">
-                                  <Tag className="h-3 w-3" />
+                                <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 hover:bg-green-200">
+                                  <Tag className="w-3 h-3 mr-1" />
                                   {doc.clientName}
-                                </span>
+                                </Badge>
+                              )}
+                              {doc.caseName && (
+                                <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">
+                                  {doc.caseName}
+                                </Badge>
                               )}
                             </div>
+                          )}
+                          
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <Clock className="w-3 h-3" />
+                            Uploaded {doc.uploadDate}
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 ml-3">
+                        
+                        <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Sheet>
                             <SheetTrigger asChild>
                               <Button
+                                type="button"
                                 variant="ghost"
-                                size="sm"
-                                className="h-8 w-8 p-0"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-blue-100"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setPreviewDocument(doc);
                                 }}
                               >
-                                <FileText className="h-4 w-4" />
+                                <Eye className="h-4 w-4" />
                               </Button>
                             </SheetTrigger>
                             <SheetContent className="w-[700px] sm:max-w-[700px]">
@@ -466,23 +298,22 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                                   </div>
                                 </div>
                                 <div className="border rounded-lg p-4 max-h-96 overflow-y-auto bg-white">
-                                  <pre className="text-sm whitespace-pre-wrap font-mono">
-                                    {doc.content}
-                                  </pre>
+                                  <pre className="text-sm whitespace-pre-wrap font-mono">{doc.content}</pre>
                                 </div>
                               </div>
                             </SheetContent>
                           </Sheet>
                           <Button
+                            type="button"
                             variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-red-100"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteSampleDoc(doc.id);
                             }}
                           >
-                            <X className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 text-red-500" />
                           </Button>
                         </div>
                       </div>
@@ -490,19 +321,28 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                   );
                 })}
               </div>
-            </div>
-          )}
-
-          {filteredSampleDocs.length === 0 && referenceFiles.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <div className="p-3 bg-gray-100 rounded-full w-fit mx-auto mb-3">
-                <FileText className="h-6 w-6 text-gray-400" />
+            ) : (
+              <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl bg-white">
+                <div className="p-3 bg-blue-100 rounded-full w-fit mx-auto mb-4">
+                  <Upload className="h-6 w-6 text-blue-600" />
+                </div>
+                <h4 className="font-medium text-gray-900 mb-2">No reference documents yet</h4>
+                <p className="text-sm text-gray-500 mb-4">
+                  Upload similar documents to help AI understand your preferred style and format
+                </p>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={() => setIsUploadDialogOpen(true)}
+                  className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Upload First Document
+                </Button>
               </div>
-              <p className="text-sm">No reference documents available</p>
-              <p className="text-xs mt-1">Upload documents to get started</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {error && (
           <motion.div
@@ -518,17 +358,17 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
         <Button
           type="submit"
           disabled={!documentType || !requirements || isProcessing}
-          className="w-full"
+          className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] disabled:transform-none disabled:hover:scale-100"
         >
           {isProcessing ? (
             <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              Generating document...
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+              Generating Your Document...
             </>
           ) : (
             <>
-              <FileText className="mr-2 h-4 w-4" />
-              Generate Document
+              <Sparkles className="h-5 w-5 mr-2" />
+              Generate Document with AI
             </>
           )}
         </Button>
@@ -541,6 +381,15 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
           </p>
         </div>
       </form>
+
+      <EnhancedUploadDialog
+        isOpen={isUploadDialogOpen}
+        onClose={() => setIsUploadDialogOpen(false)}
+        onUpload={handleEnhancedUpload}
+        documentType={documentType}
+        cases={mockCases}
+        clients={mockClients}
+      />
     </div>
   );
 };
