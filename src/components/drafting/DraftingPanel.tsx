@@ -1,6 +1,6 @@
 
 import React from "react";
-import { FileText } from "lucide-react";
+import { FileText, Upload, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import {
@@ -107,6 +107,17 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
 }) => {
   const [selectedJurisdiction, setSelectedJurisdiction] = React.useState("");
   const [selectedFormattingProfile, setSelectedFormattingProfile] = React.useState("standard");
+  const [referenceFiles, setReferenceFiles] = React.useState<File[]>([]);
+  const [showOptionalFields, setShowOptionalFields] = React.useState(false);
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setReferenceFiles(prev => [...prev, ...files]);
+  };
+
+  const removeFile = (index: number) => {
+    setReferenceFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-3 h-full border">
@@ -143,6 +154,67 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
             </SelectContent>
           </Select>
         </div>
+
+        {/* Reference Document Section - Visible when document type is selected */}
+        {documentType && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-2"
+          >
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Reference Documents (Optional)
+            </label>
+            <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4">
+              <input
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.txt"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
+                disabled={isProcessing}
+              />
+              <label
+                htmlFor="file-upload"
+                className="flex flex-col items-center justify-center cursor-pointer"
+              >
+                <Upload className="h-8 w-8 text-slate-400 mb-2" />
+                <span className="text-sm text-slate-600 dark:text-slate-400">
+                  Upload reference documents
+                </span>
+                <span className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                  PDF, DOC, DOCX, TXT files
+                </span>
+              </label>
+            </div>
+            
+            {referenceFiles.length > 0 && (
+              <div className="space-y-2">
+                {referenceFiles.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-slate-50 dark:bg-slate-700 p-2 rounded"
+                  >
+                    <span className="text-sm text-slate-700 dark:text-slate-300 truncate">
+                      {file.name}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFile(index)}
+                      disabled={isProcessing}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -187,6 +259,76 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
             </SelectContent>
           </Select>
         </div>
+
+        {/* Toggle for Optional Fields */}
+        <div className="flex items-center space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowOptionalFields(!showOptionalFields)}
+            disabled={isProcessing}
+          >
+            {showOptionalFields ? "Hide" : "Show"} Optional Fields
+          </Button>
+        </div>
+
+        {/* Optional Fields Section */}
+        {showOptionalFields && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-4 border-t pt-4"
+          >
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Client Name (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="Enter client name"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-background text-sm"
+                disabled={isProcessing}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Case Number (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="Enter case number"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-background text-sm"
+                disabled={isProcessing}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Court/Agency (Optional)
+              </label>
+              <input
+                type="text"
+                placeholder="Enter court or agency name"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-background text-sm"
+                disabled={isProcessing}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Due Date (Optional)
+              </label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-background text-sm"
+                disabled={isProcessing}
+              />
+            </div>
+          </motion.div>
+        )}
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
