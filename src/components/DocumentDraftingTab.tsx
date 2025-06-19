@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { FileText, Eye, Download, Trash2, Upload, Sparkles, Clock, Tag, Settings, Check, MapPin, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import EnhancedUploadDialog from "./EnhancedUploadDialog";
+import FormattingConfigModal from "./FormattingConfigModal";
 import { EnhancedSampleDocument } from "@/types/documentTypes";
 import { mockCases, mockClients } from "@/data/mockData";
 
@@ -118,6 +118,7 @@ const DocumentDraftingTab = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewDocument, setPreviewDocument] = useState<EnhancedSampleDocument | null>(null);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [isFormattingModalOpen, setIsFormattingModalOpen] = useState(false);
   const { toast } = useToast();
 
   const handleEnhancedUpload = (document: EnhancedSampleDocument) => {
@@ -190,6 +191,15 @@ const DocumentDraftingTab = () => {
     !selectedDocumentType || doc.type === selectedDocumentType
   );
 
+  const handleSaveFormattingConfig = (config: any) => {
+    // Save the formatting configuration
+    toast({
+      title: "Formatting configuration saved",
+      description: `${config.name} has been saved successfully.`
+    });
+    setIsFormattingModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       {/* Compact Hero Section */}
@@ -204,7 +214,7 @@ const DocumentDraftingTab = () => {
             </div>
             <Button 
               variant="outline" 
-              onClick={() => navigate('/formatting')}
+              onClick={() => setIsFormattingModalOpen(true)}
               className="flex items-center gap-2"
             >
               <Settings className="h-4 w-4" />
@@ -579,6 +589,13 @@ const DocumentDraftingTab = () => {
         documentType={selectedDocumentType}
         cases={mockCases}
         clients={mockClients}
+      />
+
+      <FormattingConfigModal
+        isOpen={isFormattingModalOpen}
+        onClose={() => setIsFormattingModalOpen(false)}
+        onSave={handleSaveFormattingConfig}
+        initialData={null}
       />
     </div>
   );

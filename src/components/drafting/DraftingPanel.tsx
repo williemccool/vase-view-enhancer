@@ -31,7 +31,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import EnhancedUploadDialog from "./EnhancedUploadDialog";
+import EnhancedUploadDialog from "../EnhancedUploadDialog";
 
 import { EnhancedSampleDocument } from "@/types/documentTypes";
 import { mockCases, mockClients } from "@/data/mockData";
