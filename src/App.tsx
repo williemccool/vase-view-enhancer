@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dictation from "./pages/Dictation";
+import TranslateDocument from "./pages/TranslateDocument";
 import FormattingPreferences from "./components/FormattingPreferences";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dictation" element={<Dictation />} />
+          <Route path="/translate" element={<TranslateDocument />} />
           <Route path="/formatting" element={<FormattingPreferences />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
