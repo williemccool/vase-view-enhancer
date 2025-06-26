@@ -13,14 +13,17 @@ import { useToast } from "@/hooks/use-toast";
 
 const languages = [
   { code: "en-IN", name: "English - India" },
-  { code: "en-US", name: "English - US" },
-  { code: "en-GB", name: "English - UK" },
   { code: "hi-IN", name: "Hindi - India" },
-  { code: "es-ES", name: "Spanish - Spain" },
-  { code: "fr-FR", name: "French - France" },
-  { code: "de-DE", name: "German - Germany" },
-  { code: "ja-JP", name: "Japanese - Japan" },
-  { code: "zh-CN", name: "Chinese - Simplified" },
+  { code: "bn-IN", name: "Bengali - India" },
+  { code: "te-IN", name: "Telugu - India" },
+  { code: "mr-IN", name: "Marathi - India" },
+  { code: "ta-IN", name: "Tamil - India" },
+  { code: "gu-IN", name: "Gujarati - India" },
+  { code: "kn-IN", name: "Kannada - India" },
+  { code: "ml-IN", name: "Malayalam - India" },
+  { code: "pa-IN", name: "Punjabi - India" },
+  { code: "or-IN", name: "Odia - India" },
+  { code: "as-IN", name: "Assamese - India" },
 ];
 
 const Dictation = () => {
