@@ -49,11 +49,27 @@ const DocumentPreview = ({ generatedDocument }: DocumentPreviewProps) => {
               <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-white relative">
                 <ReactQuill
                   value={generatedDocument.htmlContent || generatedDocument.content}
-                  readOnly={true}
+                  onChange={(content) => {
+                    // Here you would update the document content
+                    console.log('Document updated:', content);
+                  }}
                   theme="snow"
                   modules={{
-                    toolbar: false
+                    toolbar: [
+                      [{ 'header': [1, 2, 3, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                      [{ 'indent': '-1'}, { 'indent': '+1' }],
+                      [{ 'align': [] }],
+                      ['link'],
+                      [{ 'color': [] }, { 'background': [] }],
+                      ['clean']
+                    ]
                   }}
+                  formats={[
+                    'header', 'bold', 'italic', 'underline', 'strike',
+                    'list', 'bullet', 'indent', 'align', 'link', 'color', 'background'
+                  ]}
                   style={{
                     height: '400px',
                     border: 'none'
