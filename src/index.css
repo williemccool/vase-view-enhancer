@@ -95,6 +95,54 @@
   }
 }
 
+/* Quill Editor Customizations */
+.document-preview-editor .ql-container {
+  border: none !important;
+  font-family: inherit;
+}
+
+.document-preview-editor .ql-editor {
+  padding: 24px !important;
+  min-height: 400px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.document-preview-editor .ql-editor p {
+  margin-bottom: 12px;
+}
+
+.document-preview-editor .ql-editor h1,
+.document-preview-editor .ql-editor h2,
+.document-preview-editor .ql-editor h3 {
+  font-weight: 600;
+  margin-bottom: 16px;
+  margin-top: 24px;
+}
+
+.document-preview-editor .ql-editor h1 {
+  font-size: 24px;
+}
+
+.document-preview-editor .ql-editor h2 {
+  font-size: 20px;
+}
+
+.document-preview-editor .ql-editor h3 {
+  font-size: 18px;
+}
+
+.document-preview-editor .ql-editor ol,
+.document-preview-editor .ql-editor ul {
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+.document-preview-editor .ql-editor li {
+  margin-bottom: 4px;
+}
+}
+
 @layer components {
   .tab-button {
     @apply relative px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;

@@ -2,12 +2,16 @@
 import { FileText, Clock, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface GeneratedDocument {
   id: string;
   type: string;
   content: string;
+  htmlContent?: string; // For rich formatted content
   generatedDate: string;
+  isStreaming?: boolean; // For live streaming updates
 }
 
 interface DocumentPreviewProps {
@@ -42,8 +46,26 @@ const DocumentPreview = ({ generatedDocument }: DocumentPreviewProps) => {
                   Download
                 </Button>
               </div>
-              <div className="border-2 border-gray-200 rounded-xl p-6 max-h-[400px] overflow-y-auto bg-gray-50">
-                <pre className="text-sm whitespace-pre-wrap font-mono leading-relaxed">{generatedDocument.content}</pre>
+              <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-white relative">
+                <ReactQuill
+                  value={generatedDocument.htmlContent || generatedDocument.content}
+                  readOnly={true}
+                  theme="snow"
+                  modules={{
+                    toolbar: false
+                  }}
+                  style={{
+                    height: '400px',
+                    border: 'none'
+                  }}
+                  className="document-preview-editor"
+                />
+                {generatedDocument.isStreaming && (
+                  <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    AI is writing...
+                  </div>
+                )}
               </div>
             </div>
           ) : (
