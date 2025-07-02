@@ -12,6 +12,11 @@ import {
   Sparkles,
   MapPin,
   Palette,
+  MousePointer2,
+  Plus,
+  ExternalLink,
+  Info,
+  ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
@@ -42,8 +47,9 @@ interface DocumentType {
   label: string;
 }
 
-// Formatting profiles
+// Mock formatting profiles - in real app these would come from FormattingPreferences
 const formattingProfiles = [
+  { value: "", label: "None selected", disabled: true },
   { value: "standard", label: "Standard Legal Format" },
   { value: "high-court", label: "High Court Format" },
   { value: "supreme-court", label: "Supreme Court Format" },
@@ -75,7 +81,7 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
 }) => {
   const [selectedJurisdiction, setSelectedJurisdiction] = React.useState("");
   const [selectedFormattingProfile, setSelectedFormattingProfile] =
-    React.useState("standard");
+    React.useState("");
   const [selectedReferenceDocuments, setSelectedReferenceDocuments] =
     React.useState<string[]>([]);
   const [sampleDocuments, setSampleDocuments] = React.useState<
@@ -216,29 +222,60 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                 Optional
               </Badge>
             </label>
-            <Select
-              value={selectedFormattingProfile}
-              onValueChange={setSelectedFormattingProfile}
-              disabled={isProcessing}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose formatting style" />
-              </SelectTrigger>
-              <SelectContent className="max-h-80">
-                {formattingProfiles.map((profile) => (
-                  <SelectItem
-                    key={profile.value}
-                    value={profile.value}
-                    className="py-2"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full" />
-                      {profile.label}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            
+            {formattingProfiles.length <= 1 ? (
+              <div className="bg-blue-50 border-2 border-dashed border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-100 rounded-full">
+                    <Palette className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-medium text-blue-900 mb-1">No formatting profiles yet</h4>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Create custom formatting profiles to ensure consistent document styling. This will help generate documents with your preferred fonts, margins, and layout.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                      onClick={() => {
+                        // In real app, this would navigate to formatting preferences
+                        window.open('/formatting', '_blank');
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Formatting Profile
+                      <ExternalLink className="h-3 w-3 ml-2" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Select
+                value={selectedFormattingProfile}
+                onValueChange={setSelectedFormattingProfile}
+                disabled={isProcessing}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose formatting style" />
+                </SelectTrigger>
+                <SelectContent className="max-h-80">
+                  {formattingProfiles.filter(p => !p.disabled).map((profile) => (
+                    <SelectItem
+                      key={profile.value}
+                      value={profile.value}
+                      className="py-2"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full" />
+                        {profile.label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
 
@@ -264,25 +301,34 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
         {documentType && (
           <div className="space-y-4 p-6 bg-gray-50 rounded-2xl">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Reference Documents
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Click to select documents that will help AI understand your
-                  preferred style
-                  {selectedReferenceDocuments.length > 0 && (
-                    <span className="ml-2 text-blue-600 font-medium">
-                      ({selectedReferenceDocuments.length} selected)
-                    </span>
-                  )}
-                </p>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Reference Documents
+                  </h3>
+                  <Badge variant="outline" className="text-xs text-gray-500">
+                    Optional
+                  </Badge>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-600">
+                  <MousePointer2 className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-medium">Click on any document below to select it as a reference.</span>
+                    <span className="block mt-1">Selected documents help AI understand your preferred writing style and format.</span>
+                    {selectedReferenceDocuments.length > 0 && (
+                      <span className="inline-flex items-center gap-1 mt-2 text-blue-600 font-medium bg-blue-100 px-2 py-1 rounded text-xs">
+                        <Check className="h-3 w-3" />
+                        {selectedReferenceDocuments.length} document{selectedReferenceDocuments.length > 1 ? 's' : ''} selected
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsUploadDialogOpen(true)}
-                className="border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 transition-all"
+                className="border-2 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50 transition-all flex-shrink-0"
               >
                 <Upload className="h-4 w-4 mr-2" />
                 Add Reference
@@ -296,15 +342,22 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                     doc.id
                   );
                   return (
-                    <div
-                      key={doc.id}
-                      className={`bg-white rounded-xl p-4 border-2 cursor-pointer transition-all group ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50 shadow-md"
-                          : "border-gray-200 hover:border-blue-300 hover:shadow-md"
-                      }`}
-                      onClick={() => handleSelectReferenceDoc(doc.id)}
-                    >
+                     <div
+                       key={doc.id}
+                       className={`bg-white rounded-xl p-4 border-2 cursor-pointer transition-all group relative ${
+                         isSelected
+                           ? "border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-500/20"
+                           : "border-gray-200 hover:border-blue-300 hover:shadow-md hover:bg-blue-50/30"
+                       }`}
+                       onClick={() => handleSelectReferenceDoc(doc.id)}
+                     >
+                       {/* Click to select indicator */}
+                       {!isSelected && (
+                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                           <MousePointer2 className="h-3 w-3" />
+                           Click to select
+                         </div>
+                       )}
                       <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-2">
@@ -460,12 +513,24 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                   <Upload className="h-6 w-6 text-blue-600" />
                 </div>
                 <h4 className="font-medium text-gray-900 mb-2">
-                  No reference documents yet
+                  No reference documents for "{documentType}"
                 </h4>
                 <p className="text-sm text-gray-500 mb-4">
-                  Upload similar documents to help AI understand your preferred
-                  style and format
+                  Upload similar {documentType.toLowerCase()} documents to help AI understand your preferred style and format. This will improve the quality of generated documents.
                 </p>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-left">
+                  <div className="flex items-start gap-2">
+                    <Info className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-amber-700">
+                      <span className="font-medium">Tip:</span> Reference documents are optional but recommended. They help the AI learn your preferred:
+                      <ul className="mt-1 space-y-1 list-disc list-inside ml-2">
+                        <li>Writing style and tone</li>
+                        <li>Document structure and formatting</li>
+                        <li>Standard clauses and language</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
                 <Button
                   type="button"
                   variant="outline"
@@ -473,7 +538,7 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
                   className="border-blue-200 text-blue-700 hover:bg-blue-50"
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  Upload First Document
+                  Upload Reference Document
                 </Button>
               </div>
             )}
@@ -492,7 +557,8 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
         <Button
           type="submit"
           disabled={!documentType || !requirements || isProcessing}
-          className="w-full"
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+          size="lg"
         >
           {isProcessing ? (
             <>
@@ -501,11 +567,30 @@ const DraftingPanel: React.FC<DraftingPanelProps> = ({
             </>
           ) : (
             <>
-              <FileText className="mr-2 h-4 w-4" />
-              Generate Document
+              <Sparkles className="mr-2 h-5 w-5" />
+              Generate Document with AI
+              <ChevronRight className="ml-2 h-4 w-4" />
             </>
           )}
         </Button>
+        
+        {/* Quick help section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="p-1 bg-blue-100 rounded-full">
+              <Info className="h-4 w-4 text-blue-600" />
+            </div>
+            <div className="text-sm">
+              <h4 className="font-medium text-blue-900 mb-1">Quick Tips for Better Results</h4>
+              <ul className="text-blue-700 space-y-1 text-xs">
+                <li>• Be specific about parties, dates, and amounts in your requirements</li>
+                <li>• Select reference documents to match your preferred style</li>
+                <li>• Choose the appropriate jurisdiction for legal compliance</li>
+                <li>• Use formatting profiles for consistent document appearance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         <div className="text-center">
           <p className="text-xs text-gray-500 bg-amber-50 border border-amber-200 rounded-lg p-3">
