@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mic, Square, Copy, Trash2, Upload, Download } from "lucide-react";
+import { Mic, Square, Copy, Trash2, Upload, Download, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { mockCases, mockClients } from "@/data/mockData";
 
 const languages = [
   { code: "en-IN", name: "English - India" },
@@ -41,6 +43,12 @@ const Dictation = () => {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcriptionProgress, setTranscriptionProgress] = useState(0);
   const [transcriptionResult, setTranscriptionResult] = useState("");
+  
+  // Save State
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [wantToTag, setWantToTag] = useState<boolean | null>(null);
+  const [selectedCase, setSelectedCase] = useState("");
+  const [selectedClient, setSelectedClient] = useState("");
   
   const recognitionRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -231,6 +239,41 @@ const Dictation = () => {
     document.body.removeChild(element);
   };
 
+  const handleSave = (textToSave: string) => {
+    if (!textToSave.trim()) {
+      toast({
+        title: "Nothing to Save",
+        description: "Please add some content before saving.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setShowSaveDialog(true);
+    setWantToTag(null);
+    setSelectedCase("");
+    setSelectedClient("");
+  };
+
+  const handleSaveSubmit = () => {
+    const saveData = {
+      text: transcriptText || transcriptionResult,
+      timestamp: new Date().toISOString(),
+      case: selectedCase ? mockCases.find(c => c.id === selectedCase) : null,
+      client: selectedClient ? mockClients.find(c => c.id === selectedClient) : null,
+    };
+    
+    console.log('Saving dictation:', saveData);
+    
+    toast({
+      title: "Dictation Saved",
+      description: wantToTag 
+        ? `Saved and tagged to ${selectedCase ? 'case' : 'client'}.`
+        : "Dictation saved successfully.",
+    });
+    
+    setShowSaveDialog(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -319,6 +362,15 @@ const Dictation = () => {
                   >
                     <Copy className="h-4 w-4" />
                     Copy Text
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleSave(transcriptText)}
+                    disabled={!transcriptText.trim()}
+                    className="flex items-center gap-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    Save
                   </Button>
                   <Button
                     variant="outline"
@@ -430,6 +482,16 @@ const Dictation = () => {
                           {transcriptionResult}
                         </p>
                       </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleSave(transcriptionResult)}
+                          className="flex items-center gap-2"
+                        >
+                          <Save className="h-4 w-4" />
+                          Save Transcription
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 )}
@@ -437,6 +499,115 @@ const Dictation = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Save Dialog */}
+        <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Save Dictation</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {wantToTag === null && (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Do you want to tag this dictation to any case or client?
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="default"
+                      onClick={() => setWantToTag(true)}
+                      className="flex-1"
+                    >
+                      Yes, Tag It
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setWantToTag(false)}
+                      className="flex-1"
+                    >
+                      No, Just Save
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {wantToTag === true && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Select Case</label>
+                    <Select value={selectedCase} onValueChange={setSelectedCase}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a case (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockCases.map((case_) => (
+                          <SelectItem key={case_.id} value={case_.id}>
+                            {case_.name} - {case_.clientName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Select Client</label>
+                    <Select value={selectedClient} onValueChange={setSelectedClient}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Choose a client (optional)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockClients.map((client) => (
+                          <SelectItem key={client.id} value={client.id}>
+                            {client.name} - {client.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setWantToTag(null)}
+                      className="flex-1"
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleSaveSubmit}
+                      className="flex-1"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {wantToTag === false && (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600">
+                    Save dictation without tagging to any case or client?
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setWantToTag(null)}
+                      className="flex-1"
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      onClick={handleSaveSubmit}
+                      className="flex-1"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
