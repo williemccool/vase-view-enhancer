@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Upload, FileText, Image, Check, AlertCircle, Download, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { mockCases, mockClients } from "@/data/mockData";
 const acceptedFileTypes = [
   { type: 'application/pdf', extension: 'PDF', icon: FileText },
   { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', extension: 'DOCX', icon: FileText },
@@ -46,6 +49,19 @@ const TranslateDocument = () => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [translatedFileName, setTranslatedFileName] = useState<string>('');
   const [error, setError] = useState<string>('');
+  // Attach dialog state
+  const [isAttachOpen, setIsAttachOpen] = useState(false);
+  const [attachType, setAttachType] = useState<'case' | 'client'>('case');
+  const [selectedCaseId, setSelectedCaseId] = useState<string>('');
+  const [selectedClientId, setSelectedClientId] = useState<string>('');
+
+  useEffect(() => {
+    document.title = 'AI Document Translation | Legal Translator';
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) {
+      meta.setAttribute('content', 'Translate legal documents and handwritten images with AI. Images up to 20MB; PDFs/DOCX up to 25MB.');
+    }
+  }, []);
 
   const isValidFileType = (file: File) => {
     return acceptedFileTypes.some(type => type.type === file.type);
@@ -61,10 +77,12 @@ const TranslateDocument = () => {
       return;
     }
 
-    if (selectedFile.size > 25 * 1024 * 1024) {
+    const isImage = selectedFile.type.startsWith('image/');
+    const maxSize = isImage ? 20 * 1024 * 1024 : 25 * 1024 * 1024;
+    if (selectedFile.size > maxSize) {
       toast({
         title: "File Too Large",
-        description: "Please select a file smaller than 25MB.",
+        description: isImage ? "Images can be up to 20MB." : "Documents can be up to 25MB.",
         variant: "destructive",
       });
       return;
@@ -169,16 +187,43 @@ const TranslateDocument = () => {
     }
   };
 
+  const handleAttachSubmit = () => {
+    const attachedTo =
+      attachType === 'case'
+        ? mockCases.find(c => c.id === selectedCaseId)?.name
+        : mockClients.find(c => c.id === selectedClientId)?.name;
+
+    toast({
+      title: "Attached",
+      description:
+        attachType === 'case'
+          ? `Translated document attached to case: ${attachedTo || ''}`
+          : `Translated document attached to client: ${attachedTo || ''}`,
+    });
+
+    setIsAttachOpen(false);
+    setSelectedCaseId('');
+    setSelectedClientId('');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-background py-10 px-4">
       <div className="max-w-2xl mx-auto">
-        <Card className="shadow-sm border-0 bg-white">
+        <header className="mb-6 text-center fade-in">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            AI Document Translation
+          </h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Upload legal documents or images (handwritten supported) and translate to your preferred language.
+          </p>
+        </header>
+        <Card className="shadow-sm border bg-card">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-semibold text-gray-900 mb-2">
-              Upload a regional-language legal document
+            <CardTitle className="text-xl font-semibold text-foreground mb-1">
+              Upload a document or image
             </CardTitle>
-            <p className="text-gray-600 text-sm">
-              Translate legal documents to your preferred language with AI precision
+            <p className="text-muted-foreground text-sm">
+              Images up to 20MB • PDFs/DOCX up to 25MB
             </p>
           </CardHeader>
           
@@ -186,11 +231,11 @@ const TranslateDocument = () => {
             {/* File Upload Zone */}
             <div
               className={cn(
-                "relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer",
+                "relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer hover-scale",
                 isDragOver 
-                  ? "border-blue-400 bg-blue-50 scale-[1.02]" 
-                  : "border-gray-300 hover:border-gray-400",
-                file && "border-green-300 bg-green-50"
+                  ? "border-ring bg-accent/40 scale-[1.02]" 
+                  : "border-border hover:border-ring",
+                file && "border-primary/40 bg-primary/5"
               )}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -315,18 +360,23 @@ const TranslateDocument = () => {
                     <p className="text-sm text-green-700">{translatedFileName}</p>
                   </div>
                 </div>
-                <div className="flex space-x-3">
+                <div className="flex flex-wrap gap-3">
                   <Button 
                     onClick={handleDownload}
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="flex items-center"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download Translated File
                   </Button>
                   <Button 
+                    variant="outline"
+                    onClick={() => setIsAttachOpen(true)}
+                  >
+                    Attach to Case/Client
+                  </Button>
+                  <Button 
                     variant="outline" 
                     onClick={handleReset}
-                    className="border-green-200 text-green-700 hover:bg-green-50"
                   >
                     Translate Another
                   </Button>
@@ -347,11 +397,73 @@ const TranslateDocument = () => {
             )}
 
             {/* File size limit note */}
-            <p className="text-xs text-gray-500 text-center">
-              Maximum file size: 25MB. Supported formats: PDF, DOCX, PNG, JPEG
+            <p className="text-xs text-muted-foreground text-center">
+              Images up to 20MB (handwritten supported). Documents (PDF, DOCX) up to 25MB. Supported formats: PDF, DOCX, PNG, JPEG.
             </p>
           </CardContent>
         </Card>
+
+        {/* Attach Dialog */}
+        <Dialog open={isAttachOpen} onOpenChange={setIsAttachOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Attach to Case or Client</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <RadioGroup
+                value={attachType}
+                onValueChange={(v) => setAttachType(v as 'case' | 'client')}
+                className="flex items-center gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="case" id="attach-case" />
+                  <Label htmlFor="attach-case">Case</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="client" id="attach-client" />
+                  <Label htmlFor="attach-client">Client</Label>
+                </div>
+              </RadioGroup>
+
+              {attachType === 'case' ? (
+                <Select value={selectedCaseId} onValueChange={setSelectedCaseId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a case" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockCases.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name} — {c.clientName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select value={selectedClientId} onValueChange={setSelectedClientId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockClients.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAttachOpen(false)}>Cancel</Button>
+              <Button
+                onClick={handleAttachSubmit}
+                disabled={(attachType === 'case' && !selectedCaseId) || (attachType === 'client' && !selectedClientId)}
+              >
+                Attach
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
