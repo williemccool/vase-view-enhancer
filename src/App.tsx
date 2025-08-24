@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Dictation from "./pages/Dictation";
 import TranslateDocument from "./pages/TranslateDocument";
+import Terms from "./pages/Terms";
 import FormattingPreferences from "./components/FormattingPreferences";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/dictation" element={<Dictation />} />
           <Route path="/translate" element={<TranslateDocument />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/formatting" element={<FormattingPreferences />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
