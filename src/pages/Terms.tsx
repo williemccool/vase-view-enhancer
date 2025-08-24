@@ -23,14 +23,14 @@ const Terms = () => {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Terms and Conditions</h1>
-          <p className="text-muted-foreground">Please read and accept our terms to continue</p>
+          <p className="text-muted-foreground">Please read and accept our terms to continue using Lawberry.ai</p>
         </div>
 
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Legal Practice Management Software Terms
+              Lawberry.ai Terms and Conditions
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -39,73 +39,62 @@ const Terms = () => {
                 <section>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <Shield className="h-4 w-4" />
-                    1. Acceptance of Terms
+                    Introduction
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    By accessing and using this legal practice management software, you accept and agree to be bound by the terms and provision of this agreement. This software is designed specifically for legal professionals and law firms to manage their practice operations.
+                    Welcome to Lawberry.ai, a product of the Lawberry Labs ("Service Provider", "Us", "Our"). 
+                    For the purposes of these Terms and Conditions, "Lawberry" refers to the website 
+                    (lawberry.ai) and the services provided by Lawberry Labs("Service"). By using Lawberry.ai 
+                    ("Service") you agree to be bound by the following terms and conditions ("Terms"). Please 
+                    read them carefully before using our Service. You and Service Provider are hereinafter 
+                    referred to individually as the Party and collectively as the Parties.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">2. Service Description</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-3">
-                    Our platform provides comprehensive case management, document generation, time tracking, billing, and client communication tools designed specifically for legal practices. Features include:
-                  </p>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                    <li>Case and client management</li>
-                    <li>Document drafting and generation</li>
-                    <li>Time tracking and billing</li>
-                    <li>Expense management</li>
-                    <li>Voice dictation and transcription</li>
-                    <li>Document translation services</li>
-                  </ul>
-                </section>
-
-                <Separator />
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    3. User Responsibilities
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed mb-3">
-                    As a user of this legal practice management system, you agree to:
-                  </p>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
-                    <li>Maintain the confidentiality of your account credentials</li>
-                    <li>Use the service in compliance with all applicable laws and regulations</li>
-                    <li>Ensure all client data is handled in accordance with attorney-client privilege</li>
-                    <li>Not share access to confidential client information with unauthorized parties</li>
-                    <li>Report any security breaches or unauthorized access immediately</li>
-                  </ul>
-                </section>
-
-                <Separator />
-
-                <section>
-                  <h3 className="text-lg font-semibold mb-3">4. Data Privacy and Security</h3>
+                  <h3 className="text-lg font-semibold mb-3">Acceptance Of Terms</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    We implement industry-standard security measures to protect your data and maintain client confidentiality. All data is encrypted in transit and at rest. We comply with legal industry standards for data protection and will never share your confidential information without your explicit consent or as required by law.
+                    By accessing or using Service Provider, you agree to comply with and be bound by these 
+                    Terms. If you do not agree to these Terms, you may not access or use the Service.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">5. Professional Compliance</h3>
+                  <h3 className="text-lg font-semibold mb-3">Modification To Terms</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Users are responsible for ensuring their use of this software complies with their local bar association rules, professional conduct standards, and legal practice regulations. This includes maintaining client confidentiality and secure handling of privileged communications.
+                    Service Provider reserves the exclusive right to modify these Terms at any time. Any 
+                    changes will be effective immediately upon posting the revised Terms on our website. Your 
+                    continued use of the Service after any such changes constitutes your acceptance of the new 
+                    Terms.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">6. Billing and Payment</h3>
+                  <h3 className="text-lg font-semibold mb-3">Eligibility</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Subscription fees are billed according to your selected plan. All fees are non-refundable unless otherwise stated. We reserve the right to modify pricing with 30 days advance notice to existing subscribers.
+                    You must be at least 18 years old to use Service. By using Service Provider, you represent 
+                    and warrant that you are at least 18 years of age. Service Provider hereby disclaims all 
+                    responsibility of unauthorized access of Service by individuals who are lesser than 18 years 
+                    of age.
+                  </p>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Account Registration</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    To access the Service, you need to register an account. You hereby warrant, to provide 
+                    accurate and complete information during the registration process and to make the best 
+                    reasonable efforts to keep your account information up-to-date. You are the sole Party 
+                    responsible for maintaining the confidentiality and integrity of your account credentials and 
+                    for all activities that occur under your account upon using Service.
                   </p>
                 </section>
 
@@ -114,37 +103,168 @@ const Terms = () => {
                 <section>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
-                    7. Limitation of Liability
+                    Prohibition of Usage
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    You are only permitted to use the Service for lawful purposes and in compliance with the 
+                    terms. By using the Service, You agree not to:
+                  </p>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 text-sm">
+                    <li>Violate any applicable national and international laws or regulations in any manner.</li>
+                    <li>Exploit, harm, or attempt to exploit or harm minors by exposing them to inappropriate content or similar actions.</li>
+                    <li>Impersonate or make an attempt to impersonate Service Provider, Service Provider's representatives, affiliates, employees, another user of Service, or any other individual or entity.</li>
+                    <li>Engage in actions that infringe upon the rights of others, or that are illegal, threatening, fraudulent, or harmful.</li>
+                    <li>Partake in any conduct that restricts or inhibits the Service Provider and another user of Service from using or enjoying the Service.</li>
+                    <li>Use the Service in a way that could disable, overload, damage, or impair the Service or interfere with the ability of other parties to engage in real-time activities through the Service.</li>
+                    <li>Employ any automated tools, like robots, spiders, viruses, malwares, worms and trojans to access the Service.</li>
+                    <li>Use manual processes to monitor or copy materials on the Service or for any other unauthorized purpose without obtaining our prior written consent.</li>
+                    <li>Utilize any devices, software, computer programs, prompts, tokens, or routines that disrupt the proper functioning of the Service.</li>
+                    <li>Introduce any viruses, trojan horses, worms, logic bombs, or other malicious or technologically harmful materials.</li>
+                    <li>Attempt to gain unauthorized access to, interfere with, damage, or disrupt any part of the Service.</li>
+                    <li>Launch an attack on the Service through a denial-of-Services or distributed denial-of-Services attack.</li>
+                    <li>Use the Service for illegal purposes or for the transmission of material that is unlawful, harassing, libelous, invasive of another's privacy, abusive, threatening, obscene or that infringes the rights or intellectual property of others.</li>
+                    <li>Rent, lease, loan, sublicense, distribute, or otherwise transfer rights to the Service.</li>
+                    <li>Engage in any data harvesting, including but not limited to, automated data scraping, mining, or extracting, from Service Provider.</li>
+                    <li>Take actions that could damage or manipulate the Company's ratings or damage its reputation.</li>
+                    <li>Make any other attempts to interfere with the proper functioning of the Service.</li>
+                  </ul>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    User Consent Clause
                   </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    While we strive to provide reliable service, this software is provided "as is" without warranties. We are not liable for any damages arising from the use of this service. Legal professionals remain fully responsible for their professional obligations and compliance with applicable laws.
+                    By submitting your case information to Service Provider, you explicitly consent to Service 
+                    Provider accessing your court records available publicly for the purpose of providing and 
+                    improving our services. You acknowledge and agree that the information accessed from 
+                    public court records will be used in accordance with our Privacy Policy and Terms and 
+                    Conditions. This includes, but is not limited to, sourcing data from eCourts, the Hon'ble 
+                    Supreme Court of India, various High Courts and Tribunals of India, and other public legal 
+                    records.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">8. Termination</h3>
+                  <h3 className="text-lg font-semibold mb-3">Disclaimer</h3>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    The information provided by Service Provider is sourced from public court records, including 
+                    but not limited to the eCourts and other government hosted websites. Users are advised to 
+                    verify the accuracy of the data directly with the respective courts or through official records. 
+                    The data provided by Service Provider is not intended for use as legal evidence and should 
+                    not be relied upon as such.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    Service Provider is not responsible for any data inaccuracy or delay in the updation of any 
+                    data on Service Provider. We do not accept any responsibility or liability for any damage or 
+                    loss arising from the direct or indirect use of the information provided by Service Provider.
+                  </p>
                   <p className="text-muted-foreground leading-relaxed">
-                    Either party may terminate this agreement at any time. Upon termination, you will have 30 days to export your data before it is permanently deleted from our systems.
+                    Service Provider also utilizes data from publicly available third-party websites. We strive to 
+                    ensure that the data we collect from third-party sources is accurate and current. However, we 
+                    do not guarantee the accuracy, completeness, or reliability of any information obtained from 
+                    third-party websites.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">9. Updates to Terms</h3>
+                  <h3 className="text-lg font-semibold mb-3">AI & Safe Usage</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    We may update these terms from time to time. Continued use of the service after changes constitutes acceptance of the new terms. We will notify users of significant changes via email or in-app notification.
+                    Service Provider employs artificial intelligence to enhance legal information providing and 
+                    decision support. We are committed to the ethical and safe use of AI. Our AI systems are 
+                    designed to respect user privacy, operate transparently, and be free from biases. We 
+                    continually monitor and update our AI models to ensure they provide accurate and fair 
+                    information. Please be aware that the knowledge base of these AI models is current as of 
+                    June 2025.
                   </p>
                 </section>
 
                 <Separator />
 
                 <section>
-                  <h3 className="text-lg font-semibold mb-3">10. Contact Information</h3>
+                  <h3 className="text-lg font-semibold mb-3">Data Security</h3>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    We implement appropriate technical and organizational measures to protect Your Personal 
+                    Data against unauthorized access, alteration, disclosure, or destruction. These measures 
+                    include:
+                  </p>
+                  <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                    <li>Regular security assessments and audits</li>
+                    <li>Access controls and authentication mechanisms</li>
+                    <li>Role based access</li>
+                  </ul>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Intellectual Property Rights</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    For questions about these terms or our service, please contact our support team at support@legalpm.com or through the in-app help system.
+                    All rights, title, and interest in and to the Intellectual Property, including but not limited to 
+                    any copyrightable works, ideas, expressions, and information contained therein, are owned by 
+                    Service Provider Labs and are protected by copyright, patent and trademark laws. You are not 
+                    permitted to use the Intellectual Property including the Service Provider logo without the 
+                    express prior written consent of Service Provider.
+                  </p>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Beta Disclaimer & Good Faith Usage</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Service Provider is currently in beta and is provided to users in good faith. The platform is 
+                    being tested and may not function as intended. By using the Service, you acknowledge and 
+                    agree that the Service is in beta, you accept any risks associated with its use, and you 
+                    understand that the platform may contain bugs, limited functionality, or other issues that 
+                    could affect its performance.
+                  </p>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Governing Law & Jurisdiction</h3>
+                  <p className="text-muted-foreground leading-relaxed mb-3">
+                    The relationship between You and Service Provider shall be governed by the laws of India, 
+                    without regard to conflict of law principles. Courts in Bengaluru, Karnataka shall have 
+                    exclusive jurisdiction over all issues arising out of these Terms or the use of Service.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    In the event of any disputes, You shall first attempt to write to us at admin@lawberry.com 
+                    so as to resolve such disputes amicably. Any dispute not resolved within 90 working days 
+                    shall be finally settled by arbitration in accordance with the Arbitration and Conciliation Act, 
+                    1996, with the seat and venue of arbitration being Bengaluru, Karnataka.
+                  </p>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Limitation Of Liability</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    To the fullest extent permitted by law, Service Provider Labs shall not be liable for any 
+                    indirect, incidental, special, consequential, or punitive damages, or any loss of profits or 
+                    revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other 
+                    intangible losses, resulting from your access to or use of or inability to access or use the 
+                    Service.
+                  </p>
+                </section>
+
+                <Separator />
+
+                <section>
+                  <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    For questions about these terms or our service, please contact us at admin@lawberry.com 
+                    or through our support system.
                   </p>
                 </section>
               </div>
