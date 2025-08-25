@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, FileText, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, FileText, ExternalLink, Filter, Book, Scale } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/use-toast';
 
@@ -132,46 +132,63 @@ const BareActsSearch = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Bare Acts Search</h1>
-            <p className="text-muted-foreground">
-              Search through Central and State bare acts using advanced fuzzy matching
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-primary/5 via-background to-accent/5">
+        <div className="container mx-auto px-6 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center mb-6">
+              <div className="p-4 bg-primary/10 rounded-full">
+                <Scale className="h-8 w-8 text-primary" />
+              </div>
+            </div>
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Bare Acts Search
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+              Discover Central and State bare acts with intelligent fuzzy search. 
+              Find the legal documents you need instantly.
             </p>
-          </div>
-
-          {/* Search Form */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Search className="h-5 w-5" />
-                Search Bare Acts
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-4">
-                <div className="flex-1">
+            
+            {/* Search Interface */}
+            <div className="bg-card rounded-2xl shadow-lg border p-8 max-w-3xl mx-auto">
+              <div className="flex flex-col lg:flex-row gap-4 mb-6">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
-                    placeholder="Enter act name, keywords, or subject..."
+                    placeholder="Search acts by name, keywords, or subject..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    className="text-base"
+                    className="pl-12 h-14 text-base border-0 bg-muted/30 focus:bg-background transition-colors rounded-xl"
                   />
                 </div>
-                <Button onClick={handleSearch} disabled={loading}>
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
+                <Button 
+                  onClick={handleSearch} 
+                  disabled={loading}
+                  size="lg"
+                  className="h-14 px-8 rounded-xl font-semibold"
+                >
+                  {loading ? (
+                    <>Searching...</>
+                  ) : (
+                    <>
+                      <Search className="h-5 w-5 mr-2" />
+                      Search
+                    </>
+                  )}
                 </Button>
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex-1">
+              {/* Filters */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Filter className="h-4 w-4" />
+                  <span className="font-medium">Filters:</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 flex-1">
                   <Select value={scope} onValueChange={setScope}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select scope" />
+                    <SelectTrigger className="h-11 rounded-lg border-muted-foreground/20">
+                      <SelectValue placeholder="All Jurisdictions" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Acts</SelectItem>
@@ -179,15 +196,13 @@ const BareActsSearch = () => {
                       <SelectItem value="state">State Acts</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
 
-                {scope === 'state' && (
-                  <div className="flex-1">
+                  {scope === 'state' && (
                     <Select value={selectedState} onValueChange={setSelectedState}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select state" />
+                      <SelectTrigger className="h-11 rounded-lg border-muted-foreground/20">
+                        <SelectValue placeholder="Select State" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-60">
                         {states.map((state) => (
                           <SelectItem key={state} value={state}>
                             {formatStateName(state)}
@@ -195,23 +210,38 @@ const BareActsSearch = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Section */}
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-6xl mx-auto">
 
           {/* Loading Skeleton */}
           {loading && results.length === 0 && (
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-6">
-                    <Skeleton className="h-6 w-3/4 mb-2" />
-                    <Skeleton className="h-4 w-1/2 mb-4" />
-                    <div className="flex gap-2">
-                      <Skeleton className="h-6 w-16" />
-                      <Skeleton className="h-6 w-12" />
+            <div className="grid gap-6">
+              {[...Array(4)].map((_, i) => (
+                <Card key={i} className="hover-lift rounded-xl border-0 shadow-sm">
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-6">
+                      <div className="flex-shrink-0">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                      </div>
+                      <div className="flex-1 space-y-4">
+                        <Skeleton className="h-6 w-4/5" />
+                        <div className="flex gap-2">
+                          <Skeleton className="h-6 w-20 rounded-full" />
+                          <Skeleton className="h-6 w-16 rounded-full" />
+                          <Skeleton className="h-6 w-24 rounded-full" />
+                        </div>
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <Skeleton className="h-10 w-28 rounded-lg" />
                     </div>
                   </CardContent>
                 </Card>
@@ -221,77 +251,96 @@ const BareActsSearch = () => {
 
           {/* Results */}
           {results.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">
-                  Search Results ({totalCount} found)
-                </h2>
-                <div className="text-sm text-muted-foreground">
-                  Page {page} • Showing {results.length} results
+            <div className="space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">
+                    Search Results
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {totalCount} acts found • Page {page}
+                  </p>
+                </div>
+                <div className="text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-full">
+                  Showing {results.length} of {totalCount} results
                 </div>
               </div>
 
-              {results.map((act, index) => (
-                <Card key={`${act.url}-${index}`} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground mb-2">
-                          {act.title}
-                        </h3>
-                        
-                        <div className="flex items-center gap-2 mb-4">
-                          <Badge variant={act.type === 'central' ? 'default' : 'secondary'}>
-                            {act.type === 'central' ? 'Central' : 'State'}
-                          </Badge>
-                          
-                          {act.year && (
-                            <Badge variant="outline">
-                              {act.year}
-                            </Badge>
-                          )}
-                          
-                          {act.state && (
-                            <Badge variant="outline">
-                              {formatStateName(act.state)}
-                            </Badge>
-                          )}
-                          
-                          <div className="text-sm text-muted-foreground">
-                            Match: {Math.round(act.score * 100)}%
+              <div className="grid gap-6">
+                {results.map((act, index) => (
+                  <Card key={`${act.url}-${index}`} className="hover-lift rounded-xl border-0 shadow-sm bg-card/50 backdrop-blur-sm">
+                    <CardContent className="p-8">
+                      <div className="flex items-start gap-6">
+                        <div className="flex-shrink-0">
+                          <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center">
+                            <Book className="h-6 w-6 text-primary" />
                           </div>
                         </div>
-                      </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xl font-bold text-foreground mb-3 leading-tight">
+                            {act.title}
+                          </h3>
+                          
+                          <div className="flex flex-wrap items-center gap-3 mb-4">
+                            <Badge 
+                              variant={act.type === 'central' ? 'default' : 'secondary'}
+                              className="px-3 py-1 text-xs font-medium rounded-full"
+                            >
+                              {act.type === 'central' ? 'Central Act' : 'State Act'}
+                            </Badge>
+                            
+                            {act.year && (
+                              <Badge variant="outline" className="px-3 py-1 text-xs rounded-full">
+                                {act.year}
+                              </Badge>
+                            )}
+                            
+                            {act.state && (
+                              <Badge variant="outline" className="px-3 py-1 text-xs rounded-full">
+                                {formatStateName(act.state)}
+                              </Badge>
+                            )}
+                            
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <div className="h-2 w-2 bg-primary rounded-full"></div>
+                              {Math.round(act.score * 100)}% match
+                            </div>
+                          </div>
+                        </div>
 
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(act.url, '_blank')}
-                        className="shrink-0"
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        View PDF
-                        <ExternalLink className="h-3 w-3 ml-1" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                        <div className="flex-shrink-0">
+                          <Button
+                            onClick={() => window.open(act.url, '_blank')}
+                            className="h-11 px-6 rounded-lg font-semibold"
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            View PDF
+                            <ExternalLink className="h-3 w-3 ml-1" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
 
               {/* Load More Button */}
               {hasMore && (
-                <div className="flex justify-center pt-6">
+                <div className="flex justify-center pt-8">
                   <Button
                     onClick={handleLoadMore}
                     disabled={loading}
                     variant="outline"
+                    size="lg"
+                    className="h-12 px-8 rounded-xl"
                   >
                     {loading ? (
-                      <>Loading...</>
+                      <>Loading more results...</>
                     ) : (
                       <>
                         Load More Results
-                        <ChevronRight className="h-4 w-4 ml-2" />
+                        <Search className="h-4 w-4 ml-2" />
                       </>
                     )}
                   </Button>
@@ -302,15 +351,49 @@ const BareActsSearch = () => {
 
           {/* No Results */}
           {!loading && results.length === 0 && query && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search terms or filters to find what you're looking for.
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                <div className="h-20 w-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-4">No Acts Found</h3>
+                <p className="text-muted-foreground mb-8 leading-relaxed">
+                  We couldn't find any acts matching "{query}". Try different keywords or adjust your filters to discover relevant legal documents.
                 </p>
-              </CardContent>
-            </Card>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {setQuery(''); setResults([]);}}
+                    className="rounded-lg"
+                  >
+                    Clear Search
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {setScope('all'); setSelectedState('');}}
+                    className="rounded-lg"
+                  >
+                    Reset Filters
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Welcome State */}
+          {!loading && results.length === 0 && !query && (
+            <div className="text-center py-16">
+              <div className="max-w-lg mx-auto">
+                <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Scale className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Search</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Enter keywords above to search through thousands of Central and State bare acts. 
+                  Our intelligent fuzzy search will help you find the most relevant legal documents.
+                </p>
+              </div>
+            </div>
           )}
         </div>
       </div>
